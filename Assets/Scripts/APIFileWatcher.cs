@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System;
 
 namespace HexAPIParser
 {
@@ -22,6 +23,7 @@ namespace HexAPIParser
 		public Rect DumpCollectionButtonRect;
 		public Rect SaveCollectionToCache;
 		public string collectionCache = "/Users/dnorthrup/temp/hex/dr/collection.cache";
+		private DateTime lastAPIFileWrite;
 		private Guidance g;
 		private string prevAPIText = "";
 		private string APIText = "";
@@ -36,8 +38,23 @@ namespace HexAPIParser
 			float timer = 0; // This is to lower frequency of check
 			string url = "file://" + filePath;
 			while (true) {
+				// Make sure we've done all our setup
 				if (readyForBusiness) {
-				WWW www = new WWW (url);
+					// Check if the file status has been written to at all. If not, continue
+					FileInfo fInfo = new FileInfo(filePath);
+					DateTime recentAPIFileWriteTime = fInfo.LastWriteTime;
+					if(lastAPIFileWrite.Equals(null)) {
+						lastAPIFileWrite = recentAPIFileWriteTime;
+					} else {
+						// We've done stuff before, so we can compare fInfo details.
+						// See if the last file write time is later than the current file write time
+						if(lastAPIFileWrite > recentAPIFileWriteTime) {
+							continue;
+						} else {
+							lastAPIFileWrite = recentAPIFileWriteTime;
+						}
+					}
+					WWW www = new WWW (url);
 				yield return www;
 				APIText = www.text;
 				// If we got something new, go into action!
