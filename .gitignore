@@ -3,6 +3,7 @@
 # =============== #
 Temp/
 Library/
+ProjectSettings/
 
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
@@ -34,3 +35,4 @@ Thumbs.db
 # Application Builds #
 # ================== #
 *.app/
+collection.cache*
